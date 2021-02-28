@@ -7,13 +7,26 @@ module Cardano.TxSubmit.Config
   ( TxSubmitNodeConfig
   , GenTxSubmitNodeConfig (..)
   , readTxSubmitNodeConfig
+  , ToggleLogging(..)
+  , ToggleMetrics(..)
   ) where
 
 
-import           Cardano.Prelude
-import           Cardano.TxSubmit.Util
+import           Cardano.TxSubmit.Util (textShow)
+import           Control.Applicative (Applicative (pure, (<*>)))
+import           Control.Exception (IOException, catch)
 import           Data.Aeson (FromJSON (..), Object, Value (..), (.:))
 import           Data.Aeson.Types (Parser)
+import           Data.Bool (bool)
+import           Data.ByteString (ByteString)
+import           Data.Either (Either (Left, Right))
+import           Data.Eq (Eq)
+import           Data.Function (($))
+import           Data.Functor (Functor (..), (<$>))
+import           Data.Semigroup (Semigroup ((<>)))
+import           Protolude.Panic (panic)
+import           System.IO (FilePath, IO)
+import           Text.Show (Show)
 
 import qualified Cardano.BM.Configuration as Logging
 import qualified Cardano.BM.Configuration.Model as Logging
@@ -25,10 +38,13 @@ import qualified Data.Yaml as Yaml
 
 type TxSubmitNodeConfig = GenTxSubmitNodeConfig Logging.Configuration
 
+data ToggleLogging = LoggingOn | LoggingOff deriving (Eq, Show)
+data ToggleMetrics = MetricsOn | MetricsOff deriving (Eq, Show)
+
 data GenTxSubmitNodeConfig a = GenTxSubmitNodeConfig
   { tscLoggingConfig :: !a
-  , tscEnableLogging :: !Bool
-  , tscEnableMetrics :: !Bool
+  , tscToggleLogging :: !ToggleLogging
+  , tscToggleMetrics :: !ToggleMetrics
   }
 
 readTxSubmitNodeConfig :: FilePath -> IO TxSubmitNodeConfig
@@ -48,15 +64,13 @@ convertLogging tsc = do
   lc <- Logging.setupFromRepresentation $ tscLoggingConfig tsc
   pure $ tsc { tscLoggingConfig = lc }
 
--- -------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 instance FromJSON (GenTxSubmitNodeConfig Logging.Representation) where
-  parseJSON o =
-    Aeson.withObject "top-level" parseGenTxSubmitNodeConfig o
+  parseJSON o = Aeson.withObject "top-level" parseGenTxSubmitNodeConfig o
 
 parseGenTxSubmitNodeConfig :: Object -> Parser (GenTxSubmitNodeConfig Logging.Representation)
-parseGenTxSubmitNodeConfig o =
-  GenTxSubmitNodeConfig
+parseGenTxSubmitNodeConfig o = GenTxSubmitNodeConfig
     <$> parseJSON (Object o)
-    <*> o .: "EnableLogging"
-    <*> o .: "EnableLogMetrics"
+    <*> fmap (bool LoggingOff LoggingOn) (o .: "EnableLogging")
+    <*> fmap (bool MetricsOff MetricsOn) (o .: "EnableLogMetrics")

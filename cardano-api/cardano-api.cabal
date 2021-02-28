@@ -17,9 +17,9 @@ library
 
   exposed-modules:      Cardano.Api
                         Cardano.Api.Byron
+                        Cardano.Api.Crypto.Ed25519Bip32
                         Cardano.Api.Shelley
 
-                        Cardano.Api.Crypto.Ed25519Bip32
                         -- TODO: Eliminate in the future when
                         -- we create wrapper types for the ledger types
                         -- in this modulde
@@ -31,12 +31,7 @@ library
                         Cardano.Api.Protocol.Shelley
                         Cardano.Api.Protocol.Types
 
-                        -- TODO Review this.  Made public to compile cardano-rest
-                        Cardano.Api.TxBody
-
-  other-modules:        Cardano.Api.TxSubmit.ErrorRender
-                        Cardano.Api.TxSubmit.Types
-
+  other-modules:        
                         -- Splitting up the big Typed module:
                         Cardano.Api.Address
                         Cardano.Api.Block
@@ -49,8 +44,8 @@ library
                         Cardano.Api.IPC
                         Cardano.Api.Key
                         Cardano.Api.KeysByron
-                        Cardano.Api.KeysShelley
                         Cardano.Api.KeysPraos
+                        Cardano.Api.KeysShelley
                         Cardano.Api.Modes
                         Cardano.Api.NetworkId
                         Cardano.Api.OperationalCertificate
@@ -66,8 +61,11 @@ library
                         Cardano.Api.SpecialByron
                         Cardano.Api.StakePoolMetadata
                         Cardano.Api.Tx
+                        Cardano.Api.TxBody
                         Cardano.Api.TxInMode
                         Cardano.Api.TxMetadata
+                        Cardano.Api.TxSubmit.ErrorRender
+                        Cardano.Api.TxSubmit.Types
                         Cardano.Api.Utils
                         Cardano.Api.Value
 

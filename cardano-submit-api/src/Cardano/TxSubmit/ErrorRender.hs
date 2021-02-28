@@ -6,23 +6,17 @@ module Cardano.TxSubmit.ErrorRender
   , renderEraMismatch
   ) where
 
--- This file contains error renders. The should hve defined at a lower level, with the error
+-- This file contains error renders. The should have defined at a lower level, with the error
 -- type definitions, but for some reason have not been.
 -- They will be defined here for now and then moved where they are supposed to be once they
 -- are working.
 
-import Cardano.Chain.Byron.API
-    ( ApplyMempoolPayloadErr (..) )
-import Cardano.Chain.UTxO.UTxO
-    ( UTxOError (..) )
-import Cardano.Chain.UTxO.Validation
-    ( TxValidationError (..), UTxOValidationError (..) )
-import Data.Text
-    ( Text )
-import Formatting
-    ( build, sformat, stext, (%) )
-import Ouroboros.Consensus.Cardano.Block
-    ( EraMismatch (..) )
+import           Cardano.Chain.Byron.API (ApplyMempoolPayloadErr (..))
+import           Cardano.Chain.UTxO.UTxO (UTxOError (..))
+import           Cardano.Chain.UTxO.Validation (TxValidationError (..), UTxOValidationError (..))
+import           Data.Text (Text)
+import           Formatting (build, sformat, stext, (%))
+import           Ouroboros.Consensus.Cardano.Block (EraMismatch (..))
 
 import qualified Data.Text as T
 
@@ -34,13 +28,11 @@ renderApplyMempoolPayloadErr err =
       MempoolUpdateProposalErr {} -> "Update proposal error"
       MempoolUpdateVoteErr {} -> "Update vote error"
 
-
 renderValidationError :: UTxOValidationError -> Text
 renderValidationError ve =
   case ve of
     UTxOValidationTxValidationError tve -> renderTxValidationError tve
     UTxOValidationUTxOError ue -> renderUTxOError ue
-
 
 renderTxValidationError :: TxValidationError -> Text
 renderTxValidationError tve =

@@ -6,11 +6,13 @@
 
 module Cardano.TxSubmit.Tracing.ToObjectOrphans () where
 
-import Cardano.BM.Data.Severity
-import Cardano.BM.Data.Tracer
-import Data.Aeson ( (.=) )
-import Data.Text
-import Ouroboros.Network.NodeToClient ( ErrorPolicyTrace (..), WithAddr (..) )
+import           Cardano.BM.Data.Severity (Severity (Debug, Error, Notice, Warning))
+import           Cardano.BM.Data.Tracer (HasPrivacyAnnotation, HasSeverityAnnotation (..),
+                   HasTextFormatter, ToObject (toObject), Transformable (..), mkObject,
+                   trStructured)
+import           Data.Aeson ((.=))
+import           Data.Text (Text)
+import           Ouroboros.Network.NodeToClient (ErrorPolicyTrace (..), WithAddr (..))
 
 import qualified Network.Socket as Socket
 
@@ -27,7 +29,6 @@ instance HasSeverityAnnotation (WithAddr Socket.SockAddr ErrorPolicyTrace) where
     ErrorPolicyUnhandledApplicationException {} -> Error
     ErrorPolicyUnhandledConnectionException {} -> Error
     ErrorPolicyAcceptException {} -> Error
-
 
 instance HasTextFormatter (WithAddr Socket.SockAddr ErrorPolicyTrace) where
 

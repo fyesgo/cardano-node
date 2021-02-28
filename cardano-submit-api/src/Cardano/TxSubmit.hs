@@ -3,20 +3,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Cardano.TxSubmit
-  ( module X
-  , runTxSubmitWebapi
+  ( runTxSubmitWebapi
+  , opts
   ) where
 
 import           Cardano.BM.Trace (Trace, logInfo)
-import           Cardano.Prelude
-import           Cardano.TxSubmit.CLI.Parsers as X
-import           Cardano.TxSubmit.CLI.Types as X
-import           Cardano.TxSubmit.Config as X
+import           Cardano.TxSubmit.CLI.Parsers (opts)
+import           Cardano.TxSubmit.CLI.Types (ConfigFile (unConfigFile), TxSubmitNodeParams (..))
+import           Cardano.TxSubmit.Config (GenTxSubmitNodeConfig (..), ToggleLogging (..),
+                   TxSubmitNodeConfig, readTxSubmitNodeConfig)
 import           Cardano.TxSubmit.Metrics (registerMetricsServer)
-import           Cardano.TxSubmit.Tx as X
-import           Cardano.TxSubmit.Types as X
-import           Cardano.TxSubmit.Util as X
-import           Cardano.TxSubmit.Web as X
+import           Cardano.TxSubmit.Web (runTxSubmitServer)
+import           Control.Applicative (Applicative (..))
+import           Control.Monad (void)
+import           Control.Monad.IO.Class (MonadIO (liftIO))
+import           Data.Either (Either (..))
+import           Data.Function (($))
+import           Data.Text (Text)
+import           System.IO (IO)
 
 import qualified Cardano.BM.Setup as Logging
 import qualified Cardano.BM.Trace as Logging
@@ -43,7 +47,6 @@ runTxSubmitWebapi tsnp = do
       } = tsnp
 
 mkTracer :: TxSubmitNodeConfig -> IO (Trace IO Text)
-mkTracer enc =
-  if not (tscEnableLogging enc)
-    then pure Logging.nullTracer
-    else liftIO $ Logging.setupTrace (Right $ tscLoggingConfig enc) "cardano-tx-submit"
+mkTracer enc = case tscToggleLogging enc of
+  LoggingOn -> liftIO $ Logging.setupTrace (Right $ tscLoggingConfig enc) "cardano-tx-submit"
+  LoggingOff -> pure Logging.nullTracer

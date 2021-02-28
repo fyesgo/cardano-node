@@ -6,16 +6,15 @@ module Cardano.TxSubmit.Rest.Types
   , toWarpSettings
   ) where
 
-import Data.Function ( (&) )
+import           Data.Function ((&))
 
 import qualified Network.Wai.Handler.Warp as Warp
 
 ------------------------------------------------------------
-data WebserverConfig =
-  WebserverConfig
-    { wcHost :: Warp.HostPreference
-    , wcPort :: Warp.Port
-    }
+data WebserverConfig = WebserverConfig
+  { wcHost :: Warp.HostPreference
+  , wcPort :: Warp.Port
+  }
 
 instance Show WebserverConfig where
   show WebserverConfig {wcHost, wcPort} = show wcHost <> ":" <> show wcPort

@@ -1,4 +1,4 @@
-# Testing cardano-tx-submit-webapi
+# Testing cardano-submit-api
 
 Setting this up for testing and for actual use on a real network is significantly more difficult
 than it should be. This is definitely not ready for end users yet.
@@ -24,7 +24,7 @@ The following instructions are for generating a testnet and testing tx-submissio
 
 * Run the testnet using the following script:
     ```
-    cardano-node $ ./scripts/shelley-testnet.sh
+    cardano-node $ ./scripts/lite/shelley-testnet.sh
     ```
 
    This will also run scripts/genesis.sh if you do not have already a genesis file and create one and all necessairy delegate keys, certs etc.
@@ -40,18 +40,11 @@ The following instructions are for generating a testnet and testing tx-submissio
     Note: Transaction scripts also generate genesis directory with config files - but only if you don not have them. 
 
 
-### Set up and run the cardano-tx-submit-webapi
-
-* clone node repo:
-    ```
-    git clone https://github.com/input-output-hk/cardano-explorer 
-    cd cardano-explorer 
-    ```
-
+### Set up and run the cardano-submit-api
 
 * Generate a config file for the `tx-submit-webapi` (note the change of directory):
     ```
-    cardano-explorer $ scripts/generate-tx-submit-config.sh --require-magic \
+    cardano-node $ scripts/generate-tx-submit-config.sh --require-magic \
          --genesis-hash 6f9371...939776 --output config.yaml
     ```
     where the Genesis hash is the one output in an previous step. You can also get the value of genesis hash by running:
@@ -61,9 +54,9 @@ The following instructions are for generating a testnet and testing tx-submissio
     ```
     from cardano-node directory.
 
-* Run the `cardano-tx-submit-webapi`:
+* Run the `cardano-submit-api`:
     ```
-    cardano-explorer $ cabal run cardano-tx-submit-webapi -- \
+    cardano-explorer $ cabal run cardano-submit-api -- \
          --config config.yaml \
         --genesis-file ../cardano-node/configuration/genesis/genesis.json \
         --socket-path ../cardano-node/socket/0 \
@@ -85,7 +78,7 @@ The following instructions are for generating a testnet and testing tx-submissio
     Example output from running web-api after successful transaction submission:
 
     ```
-    tx-submit-webapi/build/cardano-tx-submit-webapi/cardano-tx-submit-webapi ...
+    tx-submit-webapi/build/cardano-submit-api/cardano-submit-api ...
     [cardano-tx-submit:Info:9] [2020-02-09 18:20:04.18 UTC] Running tx-submit node
     [cardano-tx-submit:Info:9] [2020-02-09 18:20:04.18 UTC] NetworkMagic: RequiresMagic 459045235
     [cardano-tx-submit:Info:9] [2020-02-09 18:20:04.18 UTC] localInitiatorNetworkApplication: connecting to node via "../cardano-node/socket/0"
